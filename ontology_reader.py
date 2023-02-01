@@ -15,13 +15,20 @@ class OntologyReader:
         self.nodes = {}
         self.node_from_classidx = {}
         self.num_leafs = 0
+        leaf_node_labels = []
+        leaf_node_index = []
         for node in self._graph.nodes(data=True):
             node_wd_id = node[0]
             self.nodes[node_wd_id] = node[1]
 
             if node[1]["node_type"] == "leaf":
+                leaf_node_index.append(int(node[1]["class_idx"]))
+                leaf_node_labels.append(node[1]["wd_label"])
+
                 self.num_leafs += 1
                 self.node_from_classidx[node[1]["class_idx"]] = node[1]
+
+        self.leaf_node_labels = [i for _, i in sorted(zip(leaf_node_index, leaf_node_labels))]
 
         logging.info(nx.info(self._graph))
         logging.info(f"Number of Leaf Event Nodes: {self.num_leafs}")
