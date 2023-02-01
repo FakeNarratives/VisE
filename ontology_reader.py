@@ -3,7 +3,7 @@ import networkx as nx
 import numpy as np
 import sys
 
-from utils import read_jsonl, cosine_similarity
+from VisE.utils import cosine_similarity
 
 
 class OntologyReader:
@@ -44,7 +44,7 @@ class OntologyReader:
                 "ontology_idx": node["ontology_idx"],
                 "subgraph_RR_vector": subgraph_RR_vector,
                 "subgraph_RR_nodes": subgraph_RR_nodes,
-                "ontology_RR_idx": node["ontology_RR_idx"]
+                "ontology_RR_idx": node["ontology_RR_idx"],
             }
 
         logging.info("Calculate Node Weights ...")
@@ -187,7 +187,7 @@ class OntologyReader:
                 sum_leaf_distance += len(shortest_path)
 
         avg_leaf_distance = sum_leaf_distance / connected_leafs
-        return 1 / (2**(avg_leaf_distance - 1))  # Eq. (4 of the paper)
+        return 1 / (2 ** (avg_leaf_distance - 1))  # Eq. (4 of the paper)
 
     def _get_degree_of_centrality_weight(self, wd_id):
         predecessors = nx.bfs_tree(self._graph, wd_id, reverse=True)
