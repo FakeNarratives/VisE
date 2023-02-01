@@ -4,7 +4,7 @@ import numpy as np
 import os
 import torch
 import torchvision
-import utils
+import VisE.utils
 
 
 class EventDataset(torch.utils.data.Dataset):
@@ -23,13 +23,15 @@ class EventDataset(torch.utils.data.Dataset):
         )
 
         # Build image transformation
-        self.transform = torchvision.transforms.Compose([
-            torchvision.transforms.ToPILImage(),
-            torchvision.transforms.Resize(size=224),
-            torchvision.transforms.CenterCrop(size=224),
-            torchvision.transforms.ToTensor(),
-            torchvision.transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-        ])
+        self.transform = torchvision.transforms.Compose(
+            [
+                torchvision.transforms.ToPILImage(),
+                torchvision.transforms.Resize(size=224),
+                torchvision.transforms.CenterCrop(size=224),
+                torchvision.transforms.ToTensor(),
+                torchvision.transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+            ]
+        )
 
     def __getitem__(self, idx):
         x = self.dataset[idx]
@@ -49,18 +51,47 @@ class EventDataset(torch.utils.data.Dataset):
         return len(self.dataset)
 
 
+class VideoDataset(torch.utils.data.Dataset):
+    def __init__(self, images):
+        self.images = images
+
+        # Build image transformation
+        self.transform = torchvision.transforms.Compose(
+            [
+                torchvision.transforms.ToPILImage(),
+                torchvision.transforms.Resize(size=224),
+                torchvision.transforms.CenterCrop(size=224),
+                torchvision.transforms.ToTensor(),
+                torchvision.transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+            ]
+        )
+
+    def __getitem__(self, idx):
+        img = self.images[idx]
+
+        if self.transform:
+            img = self.transform(img)
+
+        return {"image": img}
+
+    def __len__(self):
+        return self.images.shape[0]
+
+
 class InferDataset(torch.utils.data.Dataset):
     def __init__(self, image_paths):
         self.image_paths = image_paths
 
         # Build image transformation
-        self.transform = torchvision.transforms.Compose([
-            torchvision.transforms.ToPILImage(),
-            torchvision.transforms.Resize(size=224),
-            torchvision.transforms.CenterCrop(size=224),
-            torchvision.transforms.ToTensor(),
-            torchvision.transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-        ])
+        self.transform = torchvision.transforms.Compose(
+            [
+                torchvision.transforms.ToPILImage(),
+                torchvision.transforms.Resize(size=224),
+                torchvision.transforms.CenterCrop(size=224),
+                torchvision.transforms.ToTensor(),
+                torchvision.transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+            ]
+        )
 
     def __getitem__(self, idx):
         image_path = self.image_paths[idx]
